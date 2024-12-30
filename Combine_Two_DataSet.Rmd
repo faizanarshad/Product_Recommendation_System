@@ -1,0 +1,53 @@
+---
+title: "e_commerece Data"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(flexdashboard)
+library(gt)
+library(htmltools)
+library(viridisLite)
+library(viridis)
+library(dplyr)
+library(plotly)
+library(highcharter)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+```
+
+```{r}
+
+# Read data from the CSV file
+df <- read.csv("cleaned_data.csv")
+
+plot_ly(data = df, x = ~Age, y = ~Rating, color = ~`Department.Name`,
+        type = "bar", mode = "markers", marker = list(size = 10)) %>%
+  layout(title = "Age vs. Rating by Department", xaxis = list(title = "Age"),
+         yaxis = list(title = "Rating"), showlegend = TRUE)
+
+
+
+```
+
+```{}
+```
+
+## Column {data-width="350"}
+
+### Countary Wise Sucide Data
+
+```{r}
+
+```
+
+### Best Display Sizes
+
+```{r}
+
+```

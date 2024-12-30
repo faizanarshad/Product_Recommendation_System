@@ -1,0 +1,100 @@
+---
+title: "Books Review DashBoard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+#importing libraries
+library(flexdashboard)
+library(tidyverse)
+library(flexdashboard)
+library(gt)
+library(htmltools)
+library(viridisLite)
+library(viridis)
+library(highcharter)
+```
+
+```{r}
+#importing data
+df <- read.csv('bestsellers with categories.csv')
+view(df)
+# Removing duplication
+df <- df %>%
+  distinct(Name,.keep_all = TRUE) %>%
+  rename('User Rating' = User.Rating)
+```
+
+Books
+=============================================================================================================================================
+
+### Column {.tabset .tabset-fade data-width="650"}
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+### Most Popular Authors
+
+```{r}
+# Colours
+custom_colors <- viridis::mako(n = 15)
+
+# Most popular Authors
+df %>%
+  group_by(Author) %>%
+  summarise(Reviews = sum(Reviews)) %>%
+  arrange(desc(Reviews)) %>%
+  head(15) %>%
+  hchart('column',hcaes(x = Author,y = Reviews,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of Reviews: </b> {point.y} <br>') %>%
+  hc_title(text = "Most popular Authors from 2009 to 2019",
+           style = list(fontsize = '25px',fontweight = 'bold')) %>%
+  hc_credits(enabled = TRUE,text = '@miguelfzz')
+
+```
+
+### Most Popular Books
+
+```{r}
+# Colours
+custom_colors <- viridis::plasma(n = 15)
+
+# Most popular Authors
+df %>%
+  arrange(desc(Reviews)) %>%
+  head(15) %>%
+  hchart('bar',hcaes(x = Name,y = Reviews,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of Reviews: </b> {point.y} <br>') %>%
+  hc_title(text = "Most popular Books from 2009 to 2019",
+           style = list(fontsize = '25px',fontweight = 'bold')) %>%
+  hc_subtitle(text = 'By Number of Reviews',
+              style = list(fontSize = '16px')) %>%
+  hc_credits(enabled = TRUE,text = '@miguelfzz')
+```
+
+### Column {data-width="350"}
+___________________________________________________________________________________________________________________________________________
+
+
+### {.no-padding}
+
+```{r}
+# Colors
+custom_colors <- viridis::mako(n = 2)
+
+# Most common genre
+df %>%
+  group_by(Genre) %>%
+  summarise(count = n()) %>%
+  hchart('pie',hcaes(x = Genre,y=count,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Proportion: </b> {point.percentage:,.2f}%')%>%
+  hc_title(text = "Most common Genre from 2009 to 2019",
+           style = list(fontsize = '25px',fontweight = 'bold')) %>%
+  hc_credits(enabled = TRUE,text = '@miguelfzz')
+```
+
+### {.no-padding}

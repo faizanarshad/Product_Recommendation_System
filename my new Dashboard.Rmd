@@ -1,0 +1,91 @@
+---
+title: "Item Recommendation DashBoard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+#importing libraries
+library(flexdashboard)
+library(tidyverse)
+library(flexdashboard)
+library(gt)
+library(htmltools)
+library(viridisLite)
+library(viridis)
+library(highcharter)
+```
+Column {data-width=50%}
+---------------------------------------------------------------------------------------------------------
+### Most Liked Clothing IDs
+```{r}
+#importing data
+df <- read.csv('cleaned_data.csv')
+view(df)
+# Removing duplication
+df <- df %>%
+  distinct(Clothing.ID,.keep_all = TRUE) 
+
+custom_colors <- viridis::mako(n = 15)
+
+# Most Liked Clothing ID with Positive Reviews
+df %>%
+  group_by(Clothing.ID) %>%
+  summarise(Positive.Feedback.Count = sum(Positive.Feedback.Count)) %>%
+  arrange(desc(Positive.Feedback.Count)) %>%
+  head(15) %>%
+  hchart('scatter',hcaes(x = Clothing.ID,y = Positive.Feedback.Count,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of Reviews: </b> {point.y} <br>') %>%
+  hc_title(text = "Most Liked Clothing ID with Positive Reviews",
+           style = list(fontsize = '25px',fontweight = 'bold'))
+```
+Column {data-width=50%}
+---------------------------------------------------------------------------------------------------------
+### Most Rated Clothes Fashion
+
+
+```{r}
+
+custom_colors <- viridis::plasma(n = 15)
+
+# Most Rated Clothes Fashion
+df %>%
+  arrange(desc(Review.Text)) %>%
+  head(15) %>%
+  hchart('pie',hcaes(x = Class.Name,y = Age,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of Reviews: </b> {point.y} <br>') %>%
+  hc_title(text = "Most Rated Clothes Fashion",
+           style = list(fontsize = '25px',fontweight = 'bold')) %>%
+  hc_subtitle(text = 'By Number of Reviews',
+              style = list(fontSize = '16px')) 
+```
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------
+### Fashion Clothes
+
+```{r}
+# Colours
+custom_colors <- viridis::plasma(n = 15)
+
+# Fashion Clothes Liked by Different Aged Women
+df %>%
+  arrange(desc(Review.Text)) %>%
+  head(15) %>%
+  hchart('bar',hcaes(x = Class.Name,y = Age,color = custom_colors)) %>%
+  hc_add_theme(hc_theme_google()) %>%
+  hc_tooltip(pointFormat = '<b>Number of Reviews: </b> {point.y} <br>') %>%
+  hc_title(text = "Fashion Clothes Liked by Different Aged Women",
+           style = list(fontsize = '25px',fontweight = 'bold')) %>%
+  hc_subtitle(text = 'By Number of Reviews',
+              style = list(fontSize = '16px')) 
+```
+
+
